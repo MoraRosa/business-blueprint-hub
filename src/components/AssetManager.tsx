@@ -78,12 +78,12 @@ const AssetManager = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Image className="h-4 w-4 mr-2" />
-          Brand Assets
+        <Button variant="outline" size="sm" className="h-9 px-2 md:px-3">
+          <Image className="h-4 w-4 md:mr-2" />
+          <span className="hidden md:inline">Brand Assets</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-[95vw] md:max-w-2xl max-h-[85vh] md:max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Brand Assets</DialogTitle>
           <DialogDescription>

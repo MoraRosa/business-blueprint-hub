@@ -53,63 +53,67 @@ const PitchDeck = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-3xl font-bold">Pitch Deck</h2>
-          <p className="text-muted-foreground mt-2">
+          <h2 className="text-2xl md:text-3xl font-bold">Pitch Deck</h2>
+          <p className="text-muted-foreground mt-1 md:mt-2 text-sm md:text-base">
             Create a compelling pitch deck for investors and stakeholders
           </p>
         </div>
-        <Button onClick={handleSave}>
+        <Button onClick={handleSave} className="w-full sm:w-auto">
           <Save className="h-4 w-4 mr-2" />
           Save
         </Button>
       </div>
 
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between gap-2">
         <Button
           variant="outline"
+          size="sm"
           onClick={() => setCurrentSlide(Math.max(0, currentSlide - 1))}
           disabled={currentSlide === 0}
+          className="h-9 px-2 md:px-4"
         >
-          <ChevronLeft className="h-4 w-4 mr-2" />
-          Previous
+          <ChevronLeft className="h-4 w-4 md:mr-2" />
+          <span className="hidden md:inline">Previous</span>
         </Button>
-        <span className="text-sm text-muted-foreground">
+        <span className="text-xs md:text-sm text-muted-foreground whitespace-nowrap">
           Slide {currentSlide + 1} of {slides.length}
         </span>
         <Button
           variant="outline"
+          size="sm"
           onClick={() => setCurrentSlide(Math.min(slides.length - 1, currentSlide + 1))}
           disabled={currentSlide === slides.length - 1}
+          className="h-9 px-2 md:px-4"
         >
-          Next
-          <ChevronRight className="h-4 w-4 ml-2" />
+          <span className="hidden md:inline">Next</span>
+          <ChevronRight className="h-4 w-4 md:ml-2" />
         </Button>
       </div>
 
       <Card className="border-2">
-        <CardHeader>
+        <CardHeader className="pb-3">
           <Input
             value={slides[currentSlide].title}
             onChange={(e) => updateSlide(currentSlide, "title", e.target.value)}
-            className="text-2xl font-bold border-none p-0 h-auto"
+            className="text-lg md:text-2xl font-bold border-none p-0 h-auto"
             placeholder="Slide Title"
           />
-          <CardDescription>Slide {currentSlide + 1}</CardDescription>
+          <CardDescription className="text-xs md:text-sm">Slide {currentSlide + 1}</CardDescription>
         </CardHeader>
         <CardContent>
           <Textarea
             value={slides[currentSlide].content}
             onChange={(e) => updateSlide(currentSlide, "content", e.target.value)}
             placeholder="Enter your slide content here..."
-            className="min-h-[400px] text-base"
+            className="min-h-[300px] md:min-h-[400px] text-sm md:text-base"
           />
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-1.5 md:gap-2">
         {slides.map((slide, index) => (
           <Button
             key={index}

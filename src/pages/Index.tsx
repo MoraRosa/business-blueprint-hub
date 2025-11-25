@@ -114,31 +114,31 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Target className="h-6 w-6 text-primary-foreground" />
+        <div className="container mx-auto px-4 py-3 md:py-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shrink-0">
+                <Target className="h-5 w-5 md:h-6 md:w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Business Planning Platform</h1>
-                <p className="text-sm text-muted-foreground">Build your business plan step by step</p>
+                <h1 className="text-lg md:text-2xl font-bold text-foreground">Business Planning Platform</h1>
+                <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">Build your business plan step by step</p>
               </div>
             </div>
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 md:gap-2 w-full sm:w-auto">
               <AssetManager />
               
-              <Button variant="outline" size="sm" onClick={handleImport}>
-                <Upload className="h-4 w-4 mr-2" />
-                Import
+              <Button variant="outline" size="sm" onClick={handleImport} className="h-9 px-2 md:px-3">
+                <Upload className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Import</span>
               </Button>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="default" size="sm">
-                    <Download className="h-4 w-4 mr-2" />
-                    Export
+                  <Button variant="default" size="sm" className="h-9 px-2 md:px-3">
+                    <Download className="h-4 w-4 md:mr-2" />
+                    <span className="hidden md:inline">Export</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
@@ -164,41 +164,42 @@ const Index = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="h-9 w-9 shrink-0"
               >
-                <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                <Sun className="h-4 w-4 md:h-5 md:w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                <Moon className="absolute h-4 w-4 md:h-5 md:w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
               </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <main id="main-content" className="container mx-auto px-4 py-8">
+      <main id="main-content" className="container mx-auto px-4 py-4 md:py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-6 mb-8">
-            <TabsTrigger value="canvas" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              <span className="hidden sm:inline">Canvas</span>
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 mb-4 md:mb-8 h-auto">
+            <TabsTrigger value="canvas" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-2 text-xs sm:text-sm">
+              <FileText className="h-4 w-4 shrink-0" />
+              <span>Canvas</span>
             </TabsTrigger>
-            <TabsTrigger value="pitch" className="flex items-center gap-2">
-              <Presentation className="h-4 w-4" />
-              <span className="hidden sm:inline">Pitch Deck</span>
+            <TabsTrigger value="pitch" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-2 text-xs sm:text-sm">
+              <Presentation className="h-4 w-4 shrink-0" />
+              <span>Pitch</span>
             </TabsTrigger>
-            <TabsTrigger value="roadmap" className="flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              <span className="hidden sm:inline">Roadmap</span>
+            <TabsTrigger value="roadmap" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-2 text-xs sm:text-sm">
+              <Target className="h-4 w-4 shrink-0" />
+              <span>Roadmap</span>
             </TabsTrigger>
-            <TabsTrigger value="orgchart" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">Org Chart</span>
+            <TabsTrigger value="orgchart" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-2 text-xs sm:text-sm">
+              <Users className="h-4 w-4 shrink-0" />
+              <span>Org</span>
             </TabsTrigger>
-            <TabsTrigger value="checklist" className="flex items-center gap-2">
-              <CheckSquare className="h-4 w-4" />
-              <span className="hidden sm:inline">Checklist</span>
+            <TabsTrigger value="checklist" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-2 text-xs sm:text-sm">
+              <CheckSquare className="h-4 w-4 shrink-0" />
+              <span>Tasks</span>
             </TabsTrigger>
-            <TabsTrigger value="forecast" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              <span className="hidden sm:inline">Forecast</span>
+            <TabsTrigger value="forecast" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-2 text-xs sm:text-sm">
+              <BarChart3 className="h-4 w-4 shrink-0" />
+              <span>Forecast</span>
             </TabsTrigger>
           </TabsList>
 
@@ -228,8 +229,8 @@ const Index = () => {
         </Tabs>
       </main>
 
-      <footer className="border-t mt-16">
-        <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
+      <footer className="border-t mt-8 md:mt-16">
+        <div className="container mx-auto px-4 py-4 md:py-6 text-center text-xs md:text-sm text-muted-foreground">
           <p>Open Source Business Planning Platform • Made with ❤️ for entrepreneurs</p>
         </div>
       </footer>
