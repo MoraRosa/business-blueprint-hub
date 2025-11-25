@@ -17,7 +17,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <PWAInstallPrompt />
-        <BrowserRouter>
+        <BrowserRouter basename="/Miss-Buzzie">
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="*" element={<NotFound />} />
