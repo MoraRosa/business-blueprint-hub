@@ -9,71 +9,111 @@ export const exportAllTabsToPDF = async (filename: string) => {
     throw new Error("No tab content found");
   }
 
-  // Store original display styles
-  const originalStyles = Array.from(tabContents).map(el => ({
-    element: el as HTMLElement,
-    display: (el as HTMLElement).style.display,
-    dataState: el.getAttribute('data-state')
-  }));
+  console.log(`Found ${tabContents.length} tabs to export`);
+
+  const pdf = new jsPDF("p", "mm", "a4");
+  const imgWidth = 210; // A4 width in mm
+  const pageHeight = 297; // A4 height in mm
+  let isFirstPage = true;
+
+  // Create a temporary container for rendering
+  const tempContainer = document.createElement('div');
+  tempContainer.style.position = 'absolute';
+  tempContainer.style.left = '-9999px';
+  tempContainer.style.top = '0';
+  tempContainer.style.width = '1200px';
+  tempContainer.style.backgroundColor = '#ffffff';
+  tempContainer.style.padding = '20px';
+  document.body.appendChild(tempContainer);
 
   try {
-    // Make all tabs visible temporarily
-    tabContents.forEach(el => {
-      (el as HTMLElement).style.display = "block";
-      el.setAttribute('data-state', 'active');
-    });
-
-    // Wait for render
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    const pdf = new jsPDF("p", "mm", "a4");
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
-    let isFirstPage = true;
-
     // Export each tab to a separate page
-    for (const tabContent of Array.from(tabContents)) {
-      const canvas = await html2canvas(tabContent as HTMLElement, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: "#ffffff",
-        allowTaint: true,
-      });
+    for (let i = 0; i < tabContents.length; i++) {
+      const tabContent = tabContents[i] as HTMLElement;
 
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      const imgData = canvas.toDataURL("image/png");
-      let heightLeft = imgHeight;
-      let position = 0;
+      try {
+        console.log(`Capturing tab ${i + 1}/${tabContents.length}...`);
 
-      // Start each tab on a new page (except the first one)
-      if (!isFirstPage) {
-        pdf.addPage();
-      }
-      isFirstPage = false;
+        // Clone the tab content
+        const clone = tabContent.cloneNode(true) as HTMLElement;
 
-      // Add first page of this tab
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+        // Force visibility on clone
+        clone.style.display = 'block';
+        clone.style.visibility = 'visible';
+        clone.style.opacity = '1';
+        clone.style.height = 'auto';
+        clone.style.overflow = 'visible';
+        clone.style.position = 'static';
+        clone.removeAttribute('data-state');
+        clone.removeAttribute('hidden');
 
-      // Add additional pages if content is taller than one page
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
+        // Add clone to temp container
+        tempContainer.innerHTML = '';
+        tempContainer.appendChild(clone);
+
+        // Wait for render
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        const canvas = await html2canvas(tempContainer, {
+          scale: 2,
+          useCORS: false,
+          logging: false,
+          backgroundColor: "#ffffff",
+          allowTaint: true,
+          imageTimeout: 0,
+        });
+
+        console.log(`Tab ${i + 1} canvas size: ${canvas.width}x${canvas.height}`);
+
+        // Skip if canvas has no height (empty tab)
+        if (canvas.height === 0) {
+          console.warn(`Tab ${i + 1} has no content, skipping...`);
+          continue;
+        }
+
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const imgData = canvas.toDataURL("image/png");
+
+        // Validate the image data
+        if (!imgData || imgData === 'data:,') {
+          console.warn(`Tab ${i + 1} generated invalid image data, skipping...`);
+          continue;
+        }
+
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        // Start each tab on a new page (except the first one)
+        if (!isFirstPage) {
+          pdf.addPage();
+        }
+        isFirstPage = false;
+
+        // Add first page of this tab
         pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
+
+        // Add additional pages if content is taller than one page
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+      } catch (error) {
+        console.error(`Error exporting tab ${i + 1}:`, error);
+        // Continue with next tab even if one fails
       }
     }
 
+    console.log("PDF generation complete!");
     pdf.save(filename);
+  } catch (error) {
+    console.error("PDF export error:", error);
+    throw new Error("Failed to generate PDF. Please try again.");
   } finally {
-    // Restore original styles
-    originalStyles.forEach(({ element, display, dataState }) => {
-      element.style.display = display;
-      if (dataState) {
-        element.setAttribute('data-state', dataState);
-      }
-    });
+    // Remove temporary container
+    document.body.removeChild(tempContainer);
   }
 };
 
@@ -151,7 +191,7 @@ export const exportAllTabsToImage = async (filename: string) => {
     const container = document.createElement('div');
     container.style.padding = '20px';
     container.style.backgroundColor = '#ffffff';
-    
+
     // Clone all tab contents into container
     tabContents.forEach((tab, index) => {
       const clone = (tab as HTMLElement).cloneNode(true) as HTMLElement;
@@ -167,15 +207,17 @@ export const exportAllTabsToImage = async (filename: string) => {
 
     document.body.appendChild(container);
 
-    // Wait for render
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Wait for render and images to load
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     const canvas = await html2canvas(container, {
       scale: 2,
-      useCORS: true,
+      useCORS: false,
       logging: false,
       backgroundColor: "#ffffff",
       allowTaint: true,
+      imageTimeout: 0,
+      removeContainer: true,
     });
 
     // Remove temporary container
@@ -192,6 +234,9 @@ export const exportAllTabsToImage = async (filename: string) => {
         URL.revokeObjectURL(url);
       }
     });
+  } catch (error) {
+    console.error("Image export error:", error);
+    throw new Error("Failed to generate image. Please try again.");
   } finally {
     // Restore original styles
     originalStyles.forEach(({ element, display, dataState }) => {
