@@ -51,152 +51,152 @@ const BusinessModelCanvas = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-3xl font-bold">Business Model Canvas</h2>
-          <p className="text-muted-foreground mt-2">
+          <h2 className="text-2xl md:text-3xl font-bold">Business Model Canvas</h2>
+          <p className="text-muted-foreground mt-1 md:mt-2 text-sm md:text-base">
             Define your business model using the Business Model Canvas framework
           </p>
         </div>
-        <Button onClick={handleSave}>
+        <Button onClick={handleSave} className="w-full sm:w-auto">
           <Save className="h-4 w-4 mr-2" />
           Save
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="text-lg">Key Partners</CardTitle>
-            <CardDescription>Who are your key partners and suppliers?</CardDescription>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
+        <Card className="md:col-span-1 lg:col-span-1">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base md:text-lg">Key Partners</CardTitle>
+            <CardDescription className="text-xs md:text-sm">Who are your key partners and suppliers?</CardDescription>
           </CardHeader>
           <CardContent>
             <Textarea
               placeholder="List your key partnerships..."
               value={data.keyPartners}
               onChange={(e) => updateField("keyPartners", e.target.value)}
-              className="min-h-[200px]"
+              className="min-h-[150px] md:min-h-[200px] text-sm md:text-base"
             />
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="text-lg">Key Activities</CardTitle>
-            <CardDescription>What are your key activities?</CardDescription>
+        <Card className="md:col-span-1 lg:col-span-1">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base md:text-lg">Key Activities</CardTitle>
+            <CardDescription className="text-xs md:text-sm">What are your key activities?</CardDescription>
           </CardHeader>
           <CardContent>
             <Textarea
               placeholder="Describe your key activities..."
               value={data.keyActivities}
               onChange={(e) => updateField("keyActivities", e.target.value)}
-              className="min-h-[200px]"
+              className="min-h-[150px] md:min-h-[200px] text-sm md:text-base"
             />
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-1 border-2 border-primary">
-          <CardHeader>
-            <CardTitle className="text-lg">Value Propositions</CardTitle>
-            <CardDescription>What value do you deliver to customers?</CardDescription>
+        <Card className="md:col-span-2 lg:col-span-1 border-2 border-primary">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base md:text-lg">Value Propositions</CardTitle>
+            <CardDescription className="text-xs md:text-sm">What value do you deliver to customers?</CardDescription>
           </CardHeader>
           <CardContent>
             <Textarea
               placeholder="Describe your unique value proposition..."
               value={data.valuePropositions}
               onChange={(e) => updateField("valuePropositions", e.target.value)}
-              className="min-h-[200px]"
+              className="min-h-[150px] md:min-h-[200px] text-sm md:text-base"
             />
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="text-lg">Customer Relationships</CardTitle>
-            <CardDescription>How do you interact with customers?</CardDescription>
+        <Card className="md:col-span-1 lg:col-span-1">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base md:text-lg">Customer Relationships</CardTitle>
+            <CardDescription className="text-xs md:text-sm">How do you interact with customers?</CardDescription>
           </CardHeader>
           <CardContent>
             <Textarea
               placeholder="Describe customer relationships..."
               value={data.customerRelationships}
               onChange={(e) => updateField("customerRelationships", e.target.value)}
-              className="min-h-[200px]"
+              className="min-h-[150px] md:min-h-[200px] text-sm md:text-base"
             />
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="text-lg">Customer Segments</CardTitle>
-            <CardDescription>Who are your target customers?</CardDescription>
+        <Card className="md:col-span-1 lg:col-span-1">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base md:text-lg">Customer Segments</CardTitle>
+            <CardDescription className="text-xs md:text-sm">Who are your target customers?</CardDescription>
           </CardHeader>
           <CardContent>
             <Textarea
               placeholder="Define your customer segments..."
               value={data.customerSegments}
               onChange={(e) => updateField("customerSegments", e.target.value)}
-              className="min-h-[200px]"
+              className="min-h-[150px] md:min-h-[200px] text-sm md:text-base"
             />
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="text-lg">Key Resources</CardTitle>
-            <CardDescription>What resources do you need?</CardDescription>
+        <Card className="md:col-span-1 lg:col-span-1">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base md:text-lg">Key Resources</CardTitle>
+            <CardDescription className="text-xs md:text-sm">What resources do you need?</CardDescription>
           </CardHeader>
           <CardContent>
             <Textarea
               placeholder="List your key resources..."
               value={data.keyResources}
               onChange={(e) => updateField("keyResources", e.target.value)}
-              className="min-h-[200px]"
+              className="min-h-[150px] md:min-h-[200px] text-sm md:text-base"
             />
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="text-lg">Channels</CardTitle>
-            <CardDescription>How do you reach customers?</CardDescription>
+        <Card className="md:col-span-1 lg:col-span-1">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base md:text-lg">Channels</CardTitle>
+            <CardDescription className="text-xs md:text-sm">How do you reach customers?</CardDescription>
           </CardHeader>
           <CardContent>
             <Textarea
               placeholder="Describe your channels..."
               value={data.channels}
               onChange={(e) => updateField("channels", e.target.value)}
-              className="min-h-[200px]"
+              className="min-h-[150px] md:min-h-[200px] text-sm md:text-base"
             />
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="text-lg">Cost Structure</CardTitle>
-            <CardDescription>What are your main costs?</CardDescription>
+        <Card className="md:col-span-2 lg:col-span-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base md:text-lg">Cost Structure</CardTitle>
+            <CardDescription className="text-xs md:text-sm">What are your main costs?</CardDescription>
           </CardHeader>
           <CardContent>
             <Textarea
               placeholder="Detail your cost structure..."
               value={data.costStructure}
               onChange={(e) => updateField("costStructure", e.target.value)}
-              className="min-h-[150px]"
+              className="min-h-[120px] md:min-h-[150px] text-sm md:text-base"
             />
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-3">
-          <CardHeader>
-            <CardTitle className="text-lg">Revenue Streams</CardTitle>
-            <CardDescription>How do you make money?</CardDescription>
+        <Card className="md:col-span-2 lg:col-span-3">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base md:text-lg">Revenue Streams</CardTitle>
+            <CardDescription className="text-xs md:text-sm">How do you make money?</CardDescription>
           </CardHeader>
           <CardContent>
             <Textarea
               placeholder="Describe your revenue streams..."
               value={data.revenueStreams}
               onChange={(e) => updateField("revenueStreams", e.target.value)}
-              className="min-h-[150px]"
+              className="min-h-[120px] md:min-h-[150px] text-sm md:text-base"
             />
           </CardContent>
         </Card>
