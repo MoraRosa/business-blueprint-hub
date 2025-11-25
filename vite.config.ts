@@ -5,6 +5,10 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  // For GitHub Pages: Update 'base' to match your repository name
+  // Example: If your repo is "my-business-planner", use base: "/my-business-planner/"
+  // For root domain or local dev, use base: "/"
+  base: "/",
   server: {
     host: "::",
     port: 8080,
