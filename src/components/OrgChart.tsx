@@ -251,16 +251,16 @@ const OrgChart = () => {
   const departments = getRolesByDepartment();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <BrandHeader />
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-3xl font-bold">Organizational Chart</h2>
-          <p className="text-muted-foreground mt-2">
+          <h2 className="text-2xl md:text-3xl font-bold">Organizational Chart</h2>
+          <p className="text-muted-foreground mt-1 md:mt-2 text-sm md:text-base">
             Define your team structure, roles, and reporting relationships
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           {/* View Mode Toggle */}
           <div className="flex items-center gap-1 bg-muted p-1 rounded-lg">
             <Button
@@ -268,16 +268,16 @@ const OrgChart = () => {
               size="sm"
               onClick={() => setViewMode("edit")}
             >
-              <Edit className="h-4 w-4 mr-2" />
-              Edit
+              <Edit className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Edit</span>
             </Button>
             <Button
               variant={viewMode === "preview" ? "default" : "ghost"}
               size="sm"
               onClick={() => setViewMode("preview")}
             >
-              <Eye className="h-4 w-4 mr-2" />
-              Preview
+              <Eye className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Preview</span>
             </Button>
           </div>
 
@@ -306,16 +306,16 @@ const OrgChart = () => {
           {/* Export Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" disabled={isExporting || roles.length === 0}>
+              <Button variant="outline" className="flex-1 sm:flex-none" disabled={isExporting || roles.length === 0}>
                 {isExporting ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Exporting...
+                    <span className="hidden sm:inline">Exporting...</span>
                   </>
                 ) : (
                   <>
-                    <Download className="h-4 w-4 mr-2" />
-                    Export
+                    <Download className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Export</span>
                   </>
                 )}
               </Button>
@@ -333,9 +333,9 @@ const OrgChart = () => {
           </DropdownMenu>
 
           {/* Save Button */}
-          <Button onClick={handleSave}>
-            <Save className="h-4 w-4 mr-2" />
-            Save
+          <Button onClick={handleSave} className="flex-1 sm:flex-none">
+            <Save className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Save</span>
           </Button>
         </div>
       </div>
