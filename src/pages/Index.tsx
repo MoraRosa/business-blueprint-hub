@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Download, Upload, FileText, BarChart3, Users, CheckSquare, Target, Presentation, FileImage, Search } from "lucide-react";
+import { Moon, Sun, Download, Upload, FileText, BarChart3, Users, CheckSquare, Target, Presentation, FileImage, Search, Grid2X2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import BusinessModelCanvas from "@/components/BusinessModelCanvas";
 import PitchDeck from "@/components/PitchDeck";
@@ -10,6 +10,7 @@ import OrgChart from "@/components/OrgChart";
 import Checklist from "@/components/Checklist";
 import Forecasting from "@/components/Forecasting";
 import MarketResearch from "@/components/MarketResearch";
+import SWOTAnalysis from "@/components/SWOTAnalysis";
 import AssetManager from "@/components/AssetManager";
 import { useToast } from "@/hooks/use-toast";
 import { exportAllTabsToPDF, exportAllTabsToImage, exportAllData, importAllData } from "@/lib/exportUtils";
@@ -179,7 +180,7 @@ const Index = () => {
 
       <main id="main-content" className="container mx-auto px-4 py-4 md:py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 mb-4 md:mb-8 h-auto">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-8 mb-4 md:mb-8 h-auto">
             <TabsTrigger value="canvas" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-2 text-xs sm:text-sm">
               <FileText className="h-4 w-4 shrink-0" />
               <span>Canvas</span>
@@ -199,6 +200,10 @@ const Index = () => {
             <TabsTrigger value="market" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-2 text-xs sm:text-sm">
               <Search className="h-4 w-4 shrink-0" />
               <span>Market</span>
+            </TabsTrigger>
+            <TabsTrigger value="swot" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-2 text-xs sm:text-sm">
+              <Grid2X2 className="h-4 w-4 shrink-0" />
+              <span>SWOT</span>
             </TabsTrigger>
             <TabsTrigger value="checklist" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-2 text-xs sm:text-sm">
               <CheckSquare className="h-4 w-4 shrink-0" />
@@ -228,6 +233,10 @@ const Index = () => {
 
           <TabsContent value="market" className="mt-0">
             <MarketResearch />
+          </TabsContent>
+
+          <TabsContent value="swot" className="mt-0">
+            <SWOTAnalysis />
           </TabsContent>
 
           <TabsContent value="checklist" className="mt-0">
