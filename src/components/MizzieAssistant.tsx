@@ -13,7 +13,7 @@ import { useVoiceAgent, type VoiceMessage } from "@/hooks/useVoiceAgent";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { CanvasDataSchema, type CanvasData } from "@/lib/validators/schemas";
 import { cn } from "@/lib/utils";
-import { chat, getAISettings, isWebLLMSupported, type ChatMessage } from "@/lib/aiProvider";
+import { chat, getAISettings, isWebLLMSupported, type ChatMessage, type CanvasContext } from "@/lib/aiProvider";
 
 const defaultCanvasData: CanvasData = {
   keyPartners: "",
@@ -49,9 +49,13 @@ const MizzieAssistant = () => {
       // Add user message to history
       chatHistoryRef.current.push({ role: "user", content: transcript });
 
-      // Get AI response
+      // Pass current canvas data as context
+      const canvasContext: CanvasContext = canvasData;
+
+      // Get AI response with canvas context
       const response = await chat(
         chatHistoryRef.current,
+        canvasContext,
         (progress, text) => {
           setLoadingProgress(progress);
           setLoadingText(text);
@@ -74,7 +78,7 @@ const MizzieAssistant = () => {
       setLoadingProgress(0);
       setLoadingText("");
     }
-  }, []);
+  }, [canvasData]);
 
   const {
     isListening,

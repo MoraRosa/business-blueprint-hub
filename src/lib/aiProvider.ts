@@ -79,10 +79,24 @@ export const initWebLLM = async (
   }
 };
 
-// System prompt for Mizzie
-const SYSTEM_PROMPT = `You are Mizzie, a friendly business planning assistant. You help entrepreneurs fill out their Business Model Canvas.
+// Canvas data interface for context
+export interface CanvasContext {
+  keyPartners?: string;
+  keyActivities?: string;
+  keyResources?: string;
+  valuePropositions?: string;
+  customerRelationships?: string;
+  channels?: string;
+  customerSegments?: string;
+  costStructure?: string;
+  revenueStreams?: string;
+}
 
-When users describe their business, extract and organize information into these categories:
+// Build system prompt with canvas context
+const buildSystemPrompt = (canvas?: CanvasContext): string => {
+  const basePrompt = `You are Mizzie, a friendly business planning assistant. You help entrepreneurs with their Business Model Canvas.
+
+The Business Model Canvas has 9 building blocks:
 - Value Propositions: What unique value do you deliver?
 - Customer Segments: Who are your customers?
 - Channels: How do you reach customers?
@@ -96,15 +110,60 @@ When users describe their business, extract and organize information into these 
 Be conversational, encouraging, and helpful. Ask follow-up questions to get more details.
 Keep responses concise (2-3 sentences max).`;
 
+  // Add current canvas state if available
+  if (canvas) {
+    const filledSections: string[] = [];
+    const emptySections: string[] = [];
+
+    const checkSection = (name: string, value?: string) => {
+      if (value && value.trim()) {
+        filledSections.push(`${name}: ${value.trim()}`);
+      } else {
+        emptySections.push(name);
+      }
+    };
+
+    checkSection("Value Propositions", canvas.valuePropositions);
+    checkSection("Customer Segments", canvas.customerSegments);
+    checkSection("Channels", canvas.channels);
+    checkSection("Customer Relationships", canvas.customerRelationships);
+    checkSection("Revenue Streams", canvas.revenueStreams);
+    checkSection("Key Resources", canvas.keyResources);
+    checkSection("Key Activities", canvas.keyActivities);
+    checkSection("Key Partners", canvas.keyPartners);
+    checkSection("Cost Structure", canvas.costStructure);
+
+    let contextInfo = "\n\n--- CURRENT CANVAS STATE ---\n";
+
+    if (filledSections.length > 0) {
+      contextInfo += "\nFilled sections:\n" + filledSections.join("\n");
+    }
+
+    if (emptySections.length > 0) {
+      contextInfo += "\n\nEmpty sections (need to be filled): " + emptySections.join(", ");
+    }
+
+    if (filledSections.length === 0) {
+      contextInfo += "\nThe canvas is currently empty. Help the user get started!";
+    }
+
+    return basePrompt + contextInfo;
+  }
+
+  return basePrompt;
+};
+
 // Chat with WebLLM
 const chatWithWebLLM = async (
   messages: ChatMessage[],
+  canvas?: CanvasContext,
   onProgress?: (progress: number, text: string) => void
 ): Promise<string> => {
   const engine = await initWebLLM(onProgress);
-  
+  const systemPrompt = buildSystemPrompt(canvas);
+
   const response = await engine.chat.completions.create({
-    messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
+    messages: [{ role: "system", content: systemPrompt }, ...messages],
     temperature: 0.7,
     max_tokens: 256,
   });
@@ -115,13 +174,15 @@ const chatWithWebLLM = async (
 // Chat with Groq/OpenAI API
 const chatWithAPI = async (
   messages: ChatMessage[],
-  settings: AISettings
+  settings: AISettings,
+  canvas?: CanvasContext
 ): Promise<string> => {
-  const baseUrl = settings.provider === "groq" 
+  const baseUrl = settings.provider === "groq"
     ? "https://api.groq.com/openai/v1"
     : "https://api.openai.com/v1";
-  
+
   const model = settings.model || (settings.provider === "groq" ? "llama-3.1-8b-instant" : "gpt-3.5-turbo");
+  const systemPrompt = buildSystemPrompt(canvas);
 
   const response = await fetch(`${baseUrl}/chat/completions`, {
     method: "POST",
@@ -131,7 +192,7 @@ const chatWithAPI = async (
     },
     body: JSON.stringify({
       model,
-      messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
+      messages: [{ role: "system", content: systemPrompt }, ...messages],
       temperature: 0.7,
       max_tokens: 256,
     }),
@@ -149,14 +210,15 @@ const chatWithAPI = async (
 // Main chat function
 export const chat = async (
   messages: ChatMessage[],
+  canvas?: CanvasContext,
   onProgress?: (progress: number, text: string) => void
 ): Promise<string> => {
   const settings = getAISettings();
 
   if (settings.provider === "webllm") {
-    return chatWithWebLLM(messages, onProgress);
+    return chatWithWebLLM(messages, canvas, onProgress);
   } else if (settings.apiKey) {
-    return chatWithAPI(messages, settings);
+    return chatWithAPI(messages, settings, canvas);
   } else {
     throw new Error("API key required for " + settings.provider);
   }
