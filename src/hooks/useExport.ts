@@ -36,12 +36,70 @@ export function useExport({ elementId, filename, scale = 2 }: UseExportOptions):
       throw new Error(`Element with ID "${elementId}" not found`);
     }
 
-    return html2canvas(element, {
-      scale,
-      useCORS: true,
-      logging: false,
-      backgroundColor: getBackgroundColor(),
+    // Get all textarea values BEFORE cloning (values don't transfer in clone)
+    const originalTextareas = element.querySelectorAll("textarea");
+    const textareaValues: string[] = [];
+    const textareaPlaceholders: string[] = [];
+    originalTextareas.forEach((textarea) => {
+      textareaValues.push(textarea.value);
+      textareaPlaceholders.push(textarea.placeholder);
     });
+
+    // Clone the element to avoid modifying the original
+    const clone = element.cloneNode(true) as HTMLElement;
+    clone.style.position = "absolute";
+    clone.style.left = "-9999px";
+    clone.style.top = "0";
+    clone.style.width = `${element.offsetWidth}px`;
+    document.body.appendChild(clone);
+
+    // Replace all textareas with divs that show full content
+    const clonedTextareas = clone.querySelectorAll("textarea");
+    clonedTextareas.forEach((textarea, index) => {
+      const value = textareaValues[index] || "";
+      const placeholder = textareaPlaceholders[index] || "";
+
+      const div = document.createElement("div");
+      div.className = textarea.className;
+      div.style.whiteSpace = "pre-wrap";
+      div.style.wordBreak = "break-word";
+      div.style.minHeight = "auto";
+      div.style.height = "auto";
+      div.style.overflow = "visible";
+
+      // Get styles from the original textarea (not the clone)
+      const originalTextarea = originalTextareas[index];
+      if (originalTextarea) {
+        const styles = window.getComputedStyle(originalTextarea);
+        div.style.padding = styles.padding;
+        div.style.fontSize = styles.fontSize;
+        div.style.lineHeight = styles.lineHeight;
+        div.style.fontFamily = styles.fontFamily;
+        div.style.border = styles.border;
+        div.style.borderRadius = styles.borderRadius;
+        div.style.backgroundColor = styles.backgroundColor;
+        div.style.color = styles.color;
+      }
+
+      div.textContent = value || placeholder;
+      if (!value) {
+        div.style.opacity = "0.5";
+      }
+      textarea.parentNode?.replaceChild(div, textarea);
+    });
+
+    try {
+      const canvas = await html2canvas(clone, {
+        scale,
+        useCORS: true,
+        logging: false,
+        backgroundColor: getBackgroundColor(),
+      });
+      return canvas;
+    } finally {
+      // Clean up the clone
+      document.body.removeChild(clone);
+    }
   }, [elementId, scale, getBackgroundColor]);
 
   const exportPNG = useCallback(async () => {
