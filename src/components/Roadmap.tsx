@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Save, Trash2, Download, Loader2, FileImage, FileText } from "lucide-react";
+import { Plus, Save, Trash2, Download, Loader2, FileImage, FileText, Map, List } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useExport } from "@/hooks/useExport";
 import { RoadmapDataSchema, type Milestone } from "@/lib/validators/schemas";
 import BrandHeader from "./BrandHeader";
+import RoadmapVisual from "./RoadmapVisual";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +18,7 @@ import {
 
 const Roadmap = () => {
   const { toast } = useToast();
+  const [viewMode, setViewMode] = useState<"visual" | "list">("visual");
 
   // Use custom hooks
   const [milestones, setMilestones, { save }] = useLocalStorage<Milestone[]>(
@@ -87,6 +89,28 @@ const Roadmap = () => {
           </p>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
+          {/* View Mode Toggle */}
+          <div className="flex rounded-lg border overflow-hidden">
+            <Button
+              variant={viewMode === "visual" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setViewMode("visual")}
+              className="rounded-none"
+            >
+              <Map className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Journey</span>
+            </Button>
+            <Button
+              variant={viewMode === "list" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setViewMode("list")}
+              className="rounded-none"
+            >
+              <List className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">List</span>
+            </Button>
+          </div>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" disabled={isExporting} className="flex-1 sm:flex-none">
@@ -121,7 +145,7 @@ const Roadmap = () => {
         </div>
       </div>
 
-      <div id="roadmap-content">
+      {/* Add Milestone Card */}
       <Card>
         <CardHeader>
           <CardTitle>Add New Milestone</CardTitle>
@@ -165,50 +189,67 @@ const Roadmap = () => {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {(["1-year", "5-year", "10-year"] as const).map((category) => (
-          <Card key={category}>
-            <CardHeader>
-              <CardTitle>{category === "1-year" ? "1-Year" : category === "5-year" ? "5-Year" : "10-Year"} Plan</CardTitle>
-              <CardDescription>
-                {getMilestonesByCategory(category).length} milestone(s)
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {getMilestonesByCategory(category).map((milestone) => (
-                <div
-                  key={milestone.id}
-                  className="p-3 rounded-lg border bg-card space-y-2"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h4 className="font-semibold">{milestone.title}</h4>
-                      {milestone.timeframe && (
-                        <p className="text-sm text-muted-foreground">{milestone.timeframe}</p>
+      <div id="roadmap-content">
+        {/* Visual Journey View */}
+        {viewMode === "visual" && (
+          <RoadmapVisual
+            milestones={milestones}
+            onMilestoneClick={(m) => {
+              toast({
+                title: m.title,
+                description: m.description || `${m.category} milestone${m.timeframe ? ` - ${m.timeframe}` : ""}`,
+              });
+            }}
+          />
+        )}
+
+        {/* List View */}
+        {viewMode === "list" && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {(["1-year", "5-year", "10-year"] as const).map((category) => (
+              <Card key={category}>
+                <CardHeader>
+                  <CardTitle>{category === "1-year" ? "1-Year" : category === "5-year" ? "5-Year" : "10-Year"} Plan</CardTitle>
+                  <CardDescription>
+                    {getMilestonesByCategory(category).length} milestone(s)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {getMilestonesByCategory(category).map((milestone) => (
+                    <div
+                      key={milestone.id}
+                      className="p-3 rounded-lg border bg-card space-y-2"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h4 className="font-semibold">{milestone.title}</h4>
+                          {milestone.timeframe && (
+                            <p className="text-sm text-muted-foreground">{milestone.timeframe}</p>
+                          )}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeMilestone(milestone.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      {milestone.description && (
+                        <p className="text-sm text-muted-foreground">{milestone.description}</p>
                       )}
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeMilestone(milestone.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  {milestone.description && (
-                    <p className="text-sm text-muted-foreground">{milestone.description}</p>
+                  ))}
+                  {getMilestonesByCategory(category).length === 0 && (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      No milestones yet. Add one above!
+                    </p>
                   )}
-                </div>
-              ))}
-              {getMilestonesByCategory(category).length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  No milestones yet. Add one above!
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
